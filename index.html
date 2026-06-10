@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Har·ry Pot·ter Le·se·app</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root {
+    --parchment: #fdf6e3;
+    --parchment-dark: #f0e6c8;
+    --ink: #2c1e0f;
+    --ink-light: #6b4f2e;
+    --gold: #c8922a;
+    --gold-light: #f0c96a;
+    --purple: #5b3a8c;
+    --purple-light: #e8dff5;
+    --yellow-hl: #fff176;
+    --shadow: 0 4px 24px rgba(44,30,15,0.13);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #2c1e0f;
+    background-image: radial-gradient(ellipse at 20% 20%, #3d2a12 0%, #1a1008 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .book {
+    background: var(--parchment);
+    border-radius: 4px 16px 16px 4px;
+    max-width: 680px;
+    width: 100%;
+    box-shadow: -6px 0 0 #1a1008, var(--shadow), inset -2px 0 8px rgba(44,30,15,0.06);
+    border-left: 6px solid var(--gold);
+    overflow: hidden;
+  }
+
+  .book-header {
+    background: var(--purple);
+    padding: 1.25rem 1.75rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .book-header::before {
+    content: '✦';
+    position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%);
+    font-size: 3rem; color: rgba(255,255,255,0.07); pointer-events: none;
+  }
+  .book-title {
+    font-family: 'Lora', serif;
+    color: var(--gold-light);
+    font-size: 1.05rem;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+  .chapter-title {
+    font-family: 'Lora', serif;
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-top: 3px;
+  }
+
+  .progress-bar-wrap {
+    background: var(--parchment-dark);
+    padding: 0.75rem 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #e0cfa0;
+  }
+  .progress-track {
+    flex: 1; height: 8px;
+    background: #e0cfa0;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    font-weight: 700;
+    min-width: 52px;
+    text-align: right;
+  }
+
+  .main-area { padding: 1.75rem 1.75rem 1.25rem; }
+
+  /* intro */
+  #state-intro { text-align: center; padding: 1rem 0 0.5rem; }
+  #state-intro .big-icon { font-size: 3.5rem; margin-bottom: 0.5rem; }
+  #state-intro h2 { font-family:'Lora',serif; font-size:1.3rem; color:var(--ink); margin-bottom:0.5rem; }
+  #state-intro p { color:var(--ink-light); font-size:0.95rem; line-height:1.6; margin-bottom:1.25rem; }
+
+  /* sentence display */
+  .sentence-num {
+    font-size: 0.75rem; font-weight: 800; color: var(--gold);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .sentence-box {
+    background: #fff;
+    border: 1.5px solid var(--parchment-dark);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    min-height: 80px;
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 0 0.3em; line-height: 2.2;
+    font-family: 'Lora', serif; font-size: 1.35rem; color: var(--ink);
+  }
+  .word { display: inline-block; transition: background 0.15s, color 0.15s; border-radius: 4px; padding: 0 2px; }
+  .word.speaking { background: var(--yellow-hl); color: #1a1008; }
+  .word.correct { background: var(--green-ok-bg); color: var(--green-ok); font-weight: 700; }
+  .word.wrong { background: var(--red-err-bg); color: var(--red-err); font-weight: 700; text-decoration: underline wavy var(--red-err); }
+  .syl-dot { color: var(--purple); font-weight: 700; opacity: 0.5; font-size: 0.85em; }
+
+
+  /* instructions */
+  .instruction {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--purple-light);
+    border-radius: 10px; padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem; color: var(--purple); font-weight: 600;
+  }
+  .instruction .icon { font-size: 1.3rem; flex-shrink: 0; }
+
+  /* settings panel */
+  .settings-panel {
+    background: var(--parchment-dark);
+    border: 1px solid #e0cfa0;
+    border-radius: 12px;
+    padding: 0.85rem 1.25rem;
+    margin-bottom: 1.25rem;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .settings-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .settings-row label { font-size: 0.8rem; font-weight: 700; color: var(--ink-light); white-space: nowrap; }
+  .settings-row input[type=range] { flex: 1; accent-color: var(--purple); }
+  .speed-val { font-size: 0.8rem; font-weight: 700; color: var(--purple); min-width: 34px; text-align: right; }
+  .voice-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .voice-btn {
+    flex: 1; min-width: 120px;
+    border: 1.5px solid #d0bea0; background: #fff;
+    border-radius: 8px; padding: 8px 12px;
+    font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 600;
+    color: var(--ink-light); cursor: pointer; transition: all 0.15s;
+    text-align: center;
+  }
+  .voice-btn:hover { border-color: var(--purple); color: var(--purple); }
+  .voice-btn.active { background: var(--purple); border-color: var(--purple); color: #fff; }
+  .voice-btn .voice-name { display: block; font-size: 0.9rem; font-weight: 700; }
+  .voice-btn .voice-desc { display: block; font-size: 0.72rem; opacity: 0.75; margin-top: 2px; }
+  .voice-unavail { font-size: 0.8rem; color: var(--ink-light); font-style: italic; }
+
+  /* buttons */
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .btn {
+    border: none; border-radius: 10px; padding: 0.7rem 1.3rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; transition: transform 0.1s, box-shadow 0.1s;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--purple); color: #fff; box-shadow: 0 2px 8px rgba(91,58,140,0.25); }
+  .btn-primary:hover { background: #4a2e78; }
+  .btn-gold { background: var(--gold); color: #fff; box-shadow: 0 2px 8px rgba(200,146,42,0.25); }
+  .btn-gold:hover { background: #b07d20; }
+  .btn-ghost { background: var(--parchment-dark); color: var(--ink-light); }
+  .btn-ghost:hover { background: #e0cfa0; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+
+
+  /* done */
+  #state-done { text-align:center; padding: 1rem 0; }
+  #state-done .trophy { font-size: 4rem; margin-bottom: 0.75rem; }
+  #state-done h2 { font-family:'Lora',serif; font-size:1.5rem; color:var(--ink); margin-bottom:0.5rem; }
+  #state-done p { color:var(--ink-light); margin-bottom:1.25rem; }
+  .stars { font-size: 1.8rem; margin-bottom: 0.75rem; letter-spacing: 4px; }
+
+  .browser-warn {
+    background: #fff8e1; border: 1.5px solid #ffe082;
+    border-radius: 10px; padding: 0.75rem 1rem;
+    font-size: 0.85rem; color: #7a5800; margin-bottom: 1rem; display: none;
+  }
+</style>
+</head>
+<body>
+<div class="book">
+
+  <div class="book-header">
+    <div class="book-title">Har·ry Pot·ter und der Zau·ber·er·stein</div>
+    <div class="chapter-title">Ka·pi·tel 1 — Die Fa·mi·lie Durs·ley</div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 30</div>
+  </div>
+
+  <div class="main-area">
+    <!-- INTRO -->
+    <div id="state-intro">
+      <div class="big-icon">📖</div>
+      <h2>Bereit zum Lesen?</h2>
+      <p>Der Computer liest jeden Satz vor.<br>Höre zu und lies den Satz mit.<br>Die Wörter werden beim Vorlesen hervorgehoben!</p>
+
+      <div class="settings-panel">
+        <div class="settings-row">
+          <label>👩 Stimme:</label>
+          <div class="voice-row" id="voiceButtons">
+            <span class="voice-unavail">Stimmen werden geladen...</span>
+          </div>
+        </div>
+        <div class="settings-row">
+          <label>🐢 Tempo:</label>
+          <input type="range" id="speedSlider" min="0.2" max="1.0" step="0.05" value="0.4" oninput="syncSpeed(this)">
+          <span class="speed-val" id="speedVal">0.40</span>
+        </div>
+      </div>
+
+      <div class="btn-row" style="justify-content:center">
+        <button class="btn btn-primary" onclick="startApp()">✨ Los geht's!</button>
+      </div>
+    </div>
+
+    <!-- READING -->
+    <div id="state-reading" style="display:none">
+      <div class="sentence-num" id="sentenceNum">Satz 1 von 30</div>
+      <div class="sentence-box" id="sentenceBox"></div>
+
+      <div class="instruction" id="instruction-listen">
+        <span class="icon">🔊</span><span>Höre zu — der Satz wird vorgelesen!</span>
+      </div>
+      <div class="instruction" id="instruction-done" style="display:none">
+        <span class="icon">✅</span><span>Gut gehört! Klicke auf Weiter.</span>
+      </div>
+      <div class="settings-panel">
+        <div class="settings-row">
+          <label>🐢 Tempo:</label>
+          <input type="range" id="speedSliderR" min="0.2" max="1.0" step="0.05" value="0.4" oninput="syncSpeedR(this)">
+          <span class="speed-val" id="speedValR">0.40</span>
+        </div>
+      </div>
+
+      <div class="btn-row" id="btnRow">
+        <button class="btn btn-gold" id="btnListen" onclick="listenSentence()">🔊 Vorlesen</button>
+<button class="btn btn-ghost" id="btnNext" onclick="nextSentence()" style="display:none">Weiter</button>
+        <button class="btn btn-ghost" id="btnSkip" onclick="nextSentence()">Überspringen</button>
+        <button class="btn btn-ghost" id="btnHome" onclick="goHome()" title="Zur Startseite" style="margin-left:auto">🏠 Start</button>
+      </div>
+    </div>
+
+    <!-- DONE -->
+    <div id="state-done" style="display:none">
+      <div class="trophy">🏆</div>
+      <div class="stars" id="finalStars"></div>
+      <h2>Super gemacht!</h2>
+      <p id="finalText"></p>
+      <div class="btn-row" style="justify-content:center">
+        <button class="btn btn-primary" onclick="restartApp()">🔄 Noch einmal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────────
+const SENTENCES = [
+  "Die Familie Dursley wohnt in der Privet Drive Nummer vier.",
+  "Das Haus ist sauber und ordentlich.",
+  "Der Garten ist grün und gepflegt.",
+  "Die Nachbarn denken: Das ist eine perfekte Familie.",
+  "Onkel Vernon ist groß und hat einen dicken Hals.",
+  "Er arbeitet in einer Firma, die Bohrer macht.",
+  "Er ist sehr stolz auf seine Arbeit.",
+  "Am Wochenende sitzt er auf dem Sofa und schaut fern.",
+  "Tante Petunia ist dünn und hat einen langen Hals.",
+  "Sie putzt das Haus jeden Tag.",
+  "Alles muss immer perfekt aussehen.",
+  "Am Wochenende backt sie Kuchen für die Nachbarn.",
+  "Ihr Sohn Dudley ist sehr dick und sehr laut.",
+  "Er bekommt alles, was er will.",
+  "Dudley hat viele Spielsachen in seinem Zimmer.",
+  "Er macht alles kaputt, was er bekommt.",
+  "Die Dursleys lieben alles, was normal ist.",
+  "Sie mögen nichts Seltsames und nichts Merkwürdiges.",
+  "Sie reden nicht über Dinge, die ungewöhnlich sind.",
+  "Aber es gibt ein Geheimnis in diesem Haus.",
+  "Unter der Treppe wohnt ein kleiner Junge.",
+  "Sein Name ist Harry Potter.",
+  "Die Dursleys sprechen nicht gern über ihn.",
+  "Sie tun so, als ob er nicht da wäre.",
+  "Aber Harry ist da — still und leise.",
+  "Er wartet, obwohl er nicht weiß, worauf.",
+  "Er weiß nicht, dass er besonders ist.",
+  "Er weiß nicht, was er wirklich kann.",
+  "Das wird er bald herausfinden.",
+  "Und dann wird alles anders sein."
+];
+
+const SYLLABLE_MAP = {
+  "Familie":"Fa·mi·lie","Dursley":"Durs·ley","Petunia":"Pe·tu·ni·a","Vernon":"Ver·non",
+  "Dudley":"Dud·ley","Harry":"Har·ry","Potter":"Pot·ter","Privet":"Pri·vet",
+  "Spielsachen":"Spiel·sa·chen","Nachbarn":"Nach·barn","Nummer":"Num·mer",
+  "Geheimnis":"Ge·heim·nis","perfekte":"per·fek·te","ordentlich":"or·dent·lich",
+  "Wochenende":"Wo·chen·en·de","sauber":"sau·ber","Garten":"Gar·ten",
+  "normal":"nor·mal","seltsam":"selt·sam","Merkwürdiges":"Merk·wür·di·ges",
+  "ungewöhnlich":"un·ge·wöhn·lich","besonders":"be·son·ders","wirklich":"wirk·lich",
+  "herausfinden":"her·aus·fin·den","obwohl":"ob·wohl","wartet":"war·tet",
+  "kleiner":"klei·ner","arbeitet":"ar·bei·tet","Bohrer":"Boh·rer",
+  "immer":"im·mer","alles":"al·les","viele":"vie·le","Sofa":"So·fa",
+  "kaputt":"ka·putt","bekommt":"be·kommt","Treppe":"Trep·pe"
+};
+
+// ── Voice state ───────────────────────────────────────────────────────────────
+let currentIdx = 0;
+let synth = window.speechSynthesis;
+let selectedVoice = null;
+let speechRate = 0.4;
+let availableVoices = [];
+let availableEnglishVoices = [];
+let selectedEnglishVoice = null;
+
+// ── Voice loading ─────────────────────────────────────────────────────────────
+// The two best female Edge voices for German
+const EDGE_VOICE_PRESETS = [
+  {
+    name: 'Microsoft Hedda',
+    desc: 'Ruhig & klar',
+    matches: ['hedda'],
+    lang: 'de-DE'
+  },
+  {
+    name: 'Microsoft Katja',
+    desc: 'Warm & natürlich',
+    matches: ['katja'],
+    lang: 'de-DE'
+  }
+];
+
+// English female voices for names like Harry, Dudley etc.
+const EDGE_EN_MATCHES = ['libby','sonia','hazel','susan','amy','mia','clara','aria','jenny','michelle'];
+
+function findVoice(matches, lang) {
+  const all = window.speechSynthesis.getVoices();
+  for (const m of matches) {
+    const found = all.find(v => v.name.toLowerCase().includes(m) && v.lang.startsWith(lang.substring(0,2)));
+    if (found) return found;
+  }
+  // Fallback: any voice matching lang
+  return all.find(v => v.lang.startsWith(lang.substring(0,2))) || null;
+}
+
+function loadVoices() {
+  const all = window.speechSynthesis.getVoices();
+  if (all.length === 0) return; // not ready yet
+
+  // Set default German voice to Katja (warmer) or Hedda
+  selectedVoice = findVoice(['katja','hedda'], 'de') ||
+                  all.find(v => v.lang.startsWith('de')) || null;
+
+  // English voice for HP names
+  let engVoice = null;
+  for (const m of EDGE_EN_MATCHES) {
+    engVoice = all.find(v => v.name.toLowerCase().includes(m) && v.lang.startsWith('en'));
+    if (engVoice) break;
+  }
+  if (!engVoice) engVoice = all.find(v => v.lang.startsWith('en-GB') || v.lang.startsWith('en-AU'));
+  if (!engVoice) engVoice = all.find(v => v.lang.startsWith('en'));
+  selectedEnglishVoice = engVoice;
+
+  buildVoiceButtons();
+}
+
+function buildVoiceButtons() {
+  const container = document.getElementById('voiceButtons');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const all = window.speechSynthesis.getVoices();
+  let anyFound = false;
+
+  EDGE_VOICE_PRESETS.forEach((preset, i) => {
+    const voice = findVoice(preset.matches, preset.lang);
+    const btn = document.createElement('button');
+    btn.className = 'voice-btn' + (voice && selectedVoice && voice.name === selectedVoice.name ? ' active' : '');
+    btn.innerHTML = `<span class="voice-name">${preset.name}</span><span class="voice-desc">${preset.desc}</span>`;
+
+    if (voice) {
+      anyFound = true;
+      btn.addEventListener('click', () => {
+        selectedVoice = voice;
+        // Update active state
+        container.querySelectorAll('.voice-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Preview
+        synth.cancel();
+        const prev = new SpeechSynthesisUtterance('Hallo!');
+        prev.voice = voice; prev.lang = voice.lang; prev.rate = speechRate;
+        synth.speak(prev);
+      });
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+      btn.title = 'Nicht verfügbar — Edge empfohlen';
+    }
+    container.appendChild(btn);
+  });
+
+  if (!anyFound) {
+    container.innerHTML = '<span class="voice-unavail">⚠️ Edge-Stimmen nicht gefunden. Bitte Microsoft Edge nutzen.</span>';
+  }
+}
+
+function syncSpeed(slider) {
+  speechRate = parseFloat(slider.value);
+  document.getElementById('speedVal').textContent = speechRate.toFixed(2);
+  // sync reading slider if present
+  const sr = document.getElementById('speedSliderR');
+  const sv = document.getElementById('speedValR');
+  if (sr) sr.value = speechRate;
+  if (sv) sv.textContent = speechRate.toFixed(2);
+}
+
+function syncSpeedR(slider) {
+  speechRate = parseFloat(slider.value);
+  document.getElementById('speedValR').textContent = speechRate.toFixed(2);
+  // sync intro slider
+  const si = document.getElementById('speedSlider');
+  const svi = document.getElementById('speedVal');
+  if (si) si.value = speechRate;
+  if (svi) svi.textContent = speechRate.toFixed(2);
+}
+
+// Voices load async (especially Edge)
+window.speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+// Retry after short delay for Edge Android
+setTimeout(loadVoices, 800);
+
+// ── Syllable helpers ──────────────────────────────────────────────────────────
+function applySyllables(text) {
+  let result = text;
+  const keys = Object.keys(SYLLABLE_MAP).sort((a,b) => b.length - a.length);
+  keys.forEach(w => {
+    const re = new RegExp('(?<![·\\wÄäÖöÜüß])' + w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '(?![·\\wÄäÖöÜüß])','g');
+    result = result.replace(re, SYLLABLE_MAP[w]);
+  });
+  return result;
+}
+
+function renderSentenceHTML(sentence, wordStates) {
+  const tokens = sentence.split(/(\s+)/);
+  const syllabled = applySyllables(sentence);
+  const sylTokens = syllabled.split(/(\s+)/);
+  let wordIdx = 0;
+  let html = '';
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i];
+    if (/^\s+$/.test(tok)) { html += ' '; continue; }
+    const sylTok = sylTokens[i] || tok;
+    const rendered = sylTok.replace(/·/g, '<span class="syl-dot">·</span>');
+    let cls = 'word';
+    if (wordStates) {
+      if (wordStates[wordIdx] === 'correct') cls += ' correct';
+      else if (wordStates[wordIdx] === 'wrong') cls += ' wrong';
+    }
+    html += `<span class="word" id="word-${wordIdx}" data-idx="${wordIdx}">${rendered}</span>`;
+    wordIdx++;
+  }
+  return html;
+}
+
+function getSentenceWords(sentence) {
+  return sentence.match(/\S+/g) || [];
+}
+
+// ── English words that should be spoken with an English voice ─────────────────
+const ENGLISH_WORDS = new Set([
+  'dursley','dursle','privet','drive','harry','potter','dudley','vernon','petunia',
+  'piers','hagrid','hogwarts','gringotts','olivander','weasley','ron','james','lily',
+  'muggel','muggle','diagon'
+]);
+
+// Split a sentence into segments: [{text, lang}]
+function segmentSentence(sentence) {
+  const tokens = sentence.split(/(\s+)/);
+  const segments = [];
+  let current = { text: '', lang: 'de' };
+
+  tokens.forEach(tok => {
+    if (/^\s+$/.test(tok)) {
+      current.text += tok;
+      return;
+    }
+    const clean = tok.replace(/[.,!?;:—–\-„"»«""'']/g,'').toLowerCase();
+    const isEng = ENGLISH_WORDS.has(clean);
+    const lang = isEng ? 'en' : 'de';
+
+    if (lang !== current.lang && current.text.trim()) {
+      segments.push({ text: current.text.trim(), lang: current.lang });
+      current = { text: tok, lang };
+    } else {
+      current.lang = lang;
+      current.text += (current.text ? ' ' : '') + tok;
+    }
+  });
+  if (current.text.trim()) segments.push({ text: current.text.trim(), lang: current.lang });
+  return segments;
+}
+
+// ── TTS helpers ──────────────────────────────────────────────────────────────
+let highlightTimers = [];
+function clearHighlightTimers() {
+  highlightTimers.forEach(t => clearTimeout(t));
+  highlightTimers = [];
+}
+
+function charWeights(words) {
+  return words.map(w => Math.max(2, w.replace(/[.,!?;:—–]/g, '').length));
+}
+
+// Schedule proportional highlights across totalMs milliseconds.
+// Each word's share = its char-weight / total weight * totalMs.
+// startDelayMs: initial pause before first word (TTS engine startup lag).
+function scheduleProportional(words, startGlobalIdx, startDelayMs, totalMs) {
+  clearHighlightTimers();
+  const weights = charWeights(words);
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  let elapsed = startDelayMs;
+  words.forEach((w, i) => {
+    const share = (weights[i] / totalWeight) * totalMs;
+    const idx = startGlobalIdx + i;
+    const t = setTimeout(() => {
+      document.querySelectorAll('.word.speaking').forEach(el => el.classList.remove('speaking'));
+      const el = document.getElementById('word-' + idx);
+      if (el) el.classList.add('speaking');
+    }, elapsed);
+    highlightTimers.push(t);
+    elapsed += share;
+  });
+}
+
+// Calibration store: we track actual segment durations to improve estimates.
+// Maps charCount -> array of measured ms values (rolling average).
+const durationSamples = {};
+function recordDuration(charCount, ms) {
+  if (!durationSamples[charCount]) durationSamples[charCount] = [];
+  durationSamples[charCount].push(ms);
+  if (durationSamples[charCount].length > 5) durationSamples[charCount].shift();
+}
+function estimateDuration(text, rate) {
+  const chars = text.replace(/\s+/g, '').length;
+  // Check if we have calibration data for similar lengths
+  const nearby = Object.keys(durationSamples)
+    .map(Number)
+    .filter(k => Math.abs(k - chars) <= 3);
+  if (nearby.length > 0) {
+    const samples = nearby.flatMap(k => durationSamples[k]);
+    const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+    // Scale by ratio of current chars to sampled chars
+    return avg * (chars / nearby[0]);
+  }
+  // Fallback: ~13 chars/sec at rate=1.0 for German TTS
+  return (chars / (13 * rate)) * 1000;
+}
+
+// ── TTS ───────────────────────────────────────────────────────────────────────
+function listenSentence() {
+  synth.cancel();
+  clearHighlightTimers();
+  const sentence = SENTENCES[currentIdx];
+  document.getElementById('sentenceBox').innerHTML = renderSentenceHTML(sentence, null);
+  document.getElementById('btnListen').disabled = true;
+  document.getElementById('instruction-listen').style.display = 'flex';
+  document.getElementById('btnNext').style.display = 'none';
+
+  const segments = segmentSentence(sentence);
+  let globalWordIdx = 0;
+
+  function onAllDone() {
+    clearHighlightTimers();
+    document.querySelectorAll('.word.speaking').forEach(el => el.classList.remove('speaking'));
+    document.getElementById('btnListen').disabled = false;
+    document.getElementById('btnNext').style.display = 'inline-flex';
+    document.getElementById('instruction-listen').style.display = 'none';
+    document.getElementById('instruction-done').style.display = 'flex';
+  }
+
+  function speakSegment(i) {
+    if (i >= segments.length) { onAllDone(); return; }
+
+    const seg = segments[i];
+    const utter = new SpeechSynthesisUtterance(seg.text);
+    utter.rate = speechRate;
+    utter.pitch = 1.05;
+
+    if (seg.lang === 'en') {
+      if (selectedEnglishVoice) { utter.voice = selectedEnglishVoice; utter.lang = selectedEnglishVoice.lang; }
+      else { utter.lang = 'en-GB'; }
+    } else {
+      if (selectedVoice) { utter.voice = selectedVoice; utter.lang = selectedVoice.lang; }
+      else { utter.lang = 'de-DE'; }
+    }
+
+    const segWords = getSentenceWords(seg.text);
+    const segStartIdx = globalWordIdx;
+    let segWordCount = 0;
+    let startTime = null;
+    let usedBoundary = false;
+
+    // Firefox & desktop Chrome/Edge: boundary events work well
+    utter.addEventListener('boundary', (e) => {
+      if (e.name === 'word') {
+        if (!usedBoundary) {
+          // First boundary fired — cancel timer fallback
+          clearHighlightTimers();
+          usedBoundary = true;
+        }
+        document.querySelectorAll('.word.speaking').forEach(el => el.classList.remove('speaking'));
+        const el = document.getElementById('word-' + (segStartIdx + segWordCount));
+        if (el) el.classList.add('speaking');
+        segWordCount++;
+      }
+    });
+
+    utter.onstart = () => {
+      startTime = Date.now();
+      // Always start timer fallback immediately.
+      // If boundary events fire, they cancel the timers and take over.
+      // Startup lag ~80ms on most engines; proportional spread after that.
+      const estMs = estimateDuration(seg.text, speechRate);
+      scheduleProportional(segWords, segStartIdx, 80, estMs * 0.92);
+    };
+
+    utter.onend = () => {
+      const actualMs = startTime ? Date.now() - startTime : 0;
+      if (actualMs > 100) {
+        recordDuration(seg.text.replace(/\s+/g, '').length, actualMs);
+      }
+      // If timer-based: reschedule with real duration to keep remaining words accurate
+      if (!usedBoundary && actualMs > 0) {
+        scheduleProportional(segWords, segStartIdx, 0, actualMs);
+      }
+      globalWordIdx += segWords.length;
+      speakSegment(i + 1);
+    };
+
+    utter.onerror = () => { globalWordIdx += segWords.length; speakSegment(i + 1); };
+    synth.speak(utter);
+  }
+
+  speakSegment(0);
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function updateProgress() {
+  const pct = (currentIdx / SENTENCES.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${currentIdx} / ${SENTENCES.length}`;
+}
+
+function loadSentence() {
+  document.getElementById('sentenceNum').textContent = `Satz ${currentIdx + 1} von ${SENTENCES.length}`;
+  document.getElementById('sentenceBox').innerHTML = renderSentenceHTML(SENTENCES[currentIdx], null);
+  document.getElementById('btnNext').style.display = 'none';
+  document.getElementById('btnListen').disabled = false;
+  document.getElementById('instruction-listen').style.display = 'flex';
+  document.getElementById('instruction-done').style.display = 'none';
+  updateProgress();
+}
+
+function nextSentence() {
+  synth.cancel();
+  currentIdx++;
+  if (currentIdx >= SENTENCES.length) showDone();
+  else loadSentence();
+}
+
+function showDone() {
+  document.getElementById('state-reading').style.display = 'none';
+  document.getElementById('state-done').style.display = 'block';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressLabel').textContent = `${SENTENCES.length} / ${SENTENCES.length}`;
+  document.getElementById('finalStars').textContent = '⭐⭐⭐';
+  document.getElementById('finalText').textContent = 'Du hast alle 30 Sätze gelesen! Toll gemacht!';
+}
+
+function startApp() {
+  document.getElementById('state-intro').style.display = 'none';
+  document.getElementById('state-reading').style.display = 'block';
+  // sync voice buttons to reading panel
+  loadVoices();
+  loadSentence();
+}
+
+function restartApp() {
+  currentIdx = 0;
+  document.getElementById('state-done').style.display = 'none';
+  document.getElementById('state-reading').style.display = 'block';
+  loadSentence();
+}
+
+function goHome() {
+  synth.cancel();
+  currentIdx = 0;
+  document.getElementById("state-reading").style.display = "none";
+  document.getElementById("state-done").style.display = "none";
+  document.getElementById("state-intro").style.display = "block";
+  document.getElementById("progressFill").style.width = "0%";
+  document.getElementById("progressLabel").textContent = "0 / " + SENTENCES.length;
+  loadVoices();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+</script>
+</body>
+</html>
