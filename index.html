@@ -5,251 +5,367 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Harry Potter Leseapp</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700;800&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --parchment: #fdf6e3;
-    --parchment-dark: #f0e6c8;
-    --ink: #2c1e0f;
-    --ink-light: #6b4f2e;
-    --gold: #c8922a;
-    --gold-light: #f0c96a;
-    --purple: #5b3a8c;
-    --purple-light: #e8dff5;
-    --yellow-hl: #fff176;
-    --shadow: 0 4px 24px rgba(44,30,15,0.13);
-  }
+body {
+  font-family: Arial, sans-serif;
+  background: #2c1e0f;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+.book {
+  background: #fdf6e3;
+  border-radius: 12px;
+  border-left: 6px solid #c8922a;
+  width: 100%;
+  max-width: 640px;
+  overflow: hidden;
+  align-self: flex-start;
+}
 
-  body {
-    background: #2c1e0f;
-    background-image: radial-gradient(ellipse at 20% 20%, #3d2a12 0%, #1a1008 100%);
-    min-height: 100vh;
-    display: flex; align-items: flex-start; justify-content: center;
-    padding: 2rem 1rem;
-    font-family: 'Nunito', sans-serif;
-  }
+.book-header {
+  background: #5b3a8c;
+  padding: 16px 20px;
+}
+.book-title {
+  color: #f0c96a;
+  font-size: 14px;
+  font-style: italic;
+}
+.chapter-title {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 4px;
+}
 
-  .book {
-    background: var(--parchment);
-    border-radius: 4px 16px 16px 4px;
-    max-width: 680px; width: 100%;
-    box-shadow: -6px 0 0 #1a1008, var(--shadow), inset -2px 0 8px rgba(44,30,15,0.06);
-    border-left: 6px solid var(--gold);
-    overflow: hidden;
-  }
+.progress-wrap {
+  background: #f0e6c8;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #e0cfa0;
+}
+.progress-track {
+  flex: 1;
+  height: 8px;
+  background: #e0cfa0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #c8922a;
+  border-radius: 99px;
+  width: 0%;
+  transition: width 0.4s;
+}
+.progress-label {
+  font-size: 12px;
+  color: #6b4f2e;
+  font-weight: bold;
+  min-width: 50px;
+  text-align: right;
+}
 
-  .book-header {
-    background: var(--purple);
-    padding: 1.25rem 1.75rem 1rem;
-    position: relative; overflow: hidden;
-  }
-  .book-header::before {
-    content: '✦'; position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%);
-    font-size: 3rem; color: rgba(255,255,255,0.07); pointer-events: none;
-  }
-  .book-title { font-family:'Lora',serif; color:var(--gold-light); font-size:1.05rem; font-weight:400; font-style:italic; letter-spacing:0.02em; }
-  .chapter-title { font-family:'Lora',serif; color:#fff; font-size:1.35rem; font-weight:600; margin-top:3px; }
+.main {
+  padding: 20px;
+}
 
-  .progress-bar-wrap {
-    background: var(--parchment-dark); padding: 0.75rem 1.75rem;
-    display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid #e0cfa0;
-  }
-  .progress-track { flex:1; height:8px; background:#e0cfa0; border-radius:99px; overflow:hidden; }
-  .progress-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:99px; transition:width 0.4s ease; width:0%; }
-  .progress-label { font-size:0.8rem; color:var(--ink-light); font-weight:700; min-width:52px; text-align:right; }
+/* INTRO */
+.state { display: none; }
+.state.active { display: block; }
 
-  .main-area { padding: 1.75rem 1.75rem 1.25rem; }
+.big-icon { font-size: 48px; text-align: center; margin-bottom: 8px; }
+.center { text-align: center; }
+h2 { font-size: 20px; color: #2c1e0f; margin-bottom: 8px; }
+.subtitle { color: #6b4f2e; font-size: 15px; line-height: 1.6; margin-bottom: 16px; }
 
-  /* ── INTRO ── */
-  #state-intro { text-align:center; padding:0.5rem 0; }
-  #state-intro .big-icon { font-size:3.5rem; margin-bottom:0.5rem; }
-  #state-intro h2 { font-family:'Lora',serif; font-size:1.3rem; color:var(--ink); margin-bottom:0.5rem; }
-  #state-intro p { color:var(--ink-light); font-size:0.95rem; line-height:1.6; margin-bottom:1.25rem; }
+/* SETTINGS */
+.settings-box {
+  background: #f0e6c8;
+  border: 1px solid #e0cfa0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.settings-row:last-child { margin-bottom: 0; }
+.settings-row label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #6b4f2e;
+  white-space: nowrap;
+  min-width: 80px;
+}
+.settings-row input[type=range] { flex: 1; accent-color: #5b3a8c; }
+.speed-val { font-size: 13px; font-weight: bold; color: #5b3a8c; min-width: 36px; text-align: right; }
+.voice-row { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
+.voice-btn {
+  flex: 1;
+  min-width: 110px;
+  border: 2px solid #d0bea0;
+  background: white;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #6b4f2e;
+  cursor: pointer;
+  text-align: center;
+}
+.voice-btn.active { background: #5b3a8c; border-color: #5b3a8c; color: white; }
+.voice-btn small { display: block; font-size: 11px; font-weight: normal; opacity: 0.8; margin-top: 2px; }
+.voice-note { font-size: 12px; color: #6b4f2e; font-style: italic; }
 
-  /* ── CHAPTER LIST ── */
-  #state-chapters { padding: 0.25rem 0; }
-  .chapter-list { display:flex; flex-direction:column; gap:8px; margin-bottom:1.25rem; }
-  .chapter-item {
-    display:flex; align-items:center; gap:12px;
-    background:#fff; border:1.5px solid var(--parchment-dark);
-    border-radius:10px; padding:12px 16px;
-    cursor:pointer; transition:all 0.15s; text-align:left; width:100%;
-    font-family:'Nunito',sans-serif;
-  }
-  .chapter-item:hover { border-color:var(--purple); background:var(--purple-light); }
-  .chapter-num {
-    background:var(--purple); color:#fff;
-    font-size:0.75rem; font-weight:800;
-    width:28px; height:28px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    flex-shrink:0;
-  }
-  .chapter-info { flex:1; }
-  .chapter-name { font-size:0.95rem; font-weight:700; color:var(--ink); }
-  .chapter-sub { font-size:0.78rem; color:var(--ink-light); margin-top:2px; }
-  .chapter-arrow { color:var(--gold); font-size:1.1rem; }
+/* CHAPTER LIST */
+.chapter-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.chapter-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 2px solid #f0e6c8;
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: Arial, sans-serif;
+}
+.chapter-btn:hover { border-color: #5b3a8c; background: #f5f0ff; }
+.ch-num {
+  background: #5b3a8c;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ch-info { flex: 1; }
+.ch-name { font-size: 15px; font-weight: bold; color: #2c1e0f; }
+.ch-sub { font-size: 12px; color: #6b4f2e; margin-top: 2px; }
+.ch-arrow { color: #c8922a; font-size: 18px; }
 
-  /* ── READING ── */
-  .sentence-num { font-size:0.75rem; font-weight:800; color:var(--gold); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.5rem; }
-  .sentence-box {
-    background:#fff; border:1.5px solid var(--parchment-dark);
-    border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:1.25rem;
-    min-height:80px; display:flex; align-items:center; flex-wrap:wrap;
-    gap:0 0.3em; line-height:2.2;
-    font-family:'Lora',serif; font-size:1.35rem; color:var(--ink);
-  }
-  .word { display:inline-block; transition:background 0.15s,color 0.15s; border-radius:4px; padding:0 2px; }
-  .word.speaking { background:var(--yellow-hl); color:#1a1008; }
-  .syl-dot { color:var(--purple); font-weight:700; opacity:0.5; font-size:0.85em; }
+/* READING */
+.sentence-num {
+  font-size: 11px;
+  font-weight: bold;
+  color: #c8922a;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.step-row { display: flex; gap: 6px; margin-bottom: 14px; }
+.step { flex: 1; height: 6px; border-radius: 99px; background: #e0cfa0; transition: background 0.3s; }
+.step.done { background: #c8922a; }
+.step.active { background: #5b3a8c; }
 
-  .instruction {
-    display:flex; align-items:center; gap:10px;
-    background:var(--purple-light); border-radius:10px;
-    padding:0.75rem 1rem; margin-bottom:1.25rem;
-    font-size:0.9rem; color:var(--purple); font-weight:600;
-  }
-  .instruction .icon { font-size:1.3rem; flex-shrink:0; }
+.sentence-box {
+  background: white;
+  border: 2px solid #f0e6c8;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  min-height: 70px;
+  font-size: 22px;
+  line-height: 2.2;
+  color: #2c1e0f;
+}
+.word { display: inline-block; border-radius: 4px; padding: 0 2px; transition: background 0.15s; }
+.word.speaking { background: #fff176; color: #1a1008; }
+.syl-dot { color: #5b3a8c; font-weight: bold; opacity: 0.5; font-size: 0.8em; }
 
-  /* ── SETTINGS ── */
-  .settings-panel {
-    background:var(--parchment-dark); border:1px solid #e0cfa0;
-    border-radius:12px; padding:0.85rem 1.25rem;
-    margin-bottom:1.25rem; display:flex; flex-direction:column; gap:10px;
-  }
-  .settings-row { display:flex; align-items:center; gap:10px; }
-  .settings-row label { font-size:0.8rem; font-weight:700; color:var(--ink-light); white-space:nowrap; }
-  .settings-row input[type=range] { flex:1; accent-color:var(--purple); }
-  .speed-val { font-size:0.8rem; font-weight:700; color:var(--purple); min-width:34px; text-align:right; }
-  .voice-row { display:flex; gap:8px; flex-wrap:wrap; }
-  .voice-btn {
-    flex:1; min-width:120px;
-    border:1.5px solid #d0bea0; background:#fff;
-    border-radius:8px; padding:8px 12px;
-    font-family:'Nunito',sans-serif; font-size:0.85rem; font-weight:600;
-    color:var(--ink-light); cursor:pointer; transition:all 0.15s; text-align:center;
-  }
-  .voice-btn:hover { border-color:var(--purple); color:var(--purple); }
-  .voice-btn.active { background:var(--purple); border-color:var(--purple); color:#fff; }
-  .voice-btn .voice-name { display:block; font-size:0.9rem; font-weight:700; }
-  .voice-btn .voice-desc { display:block; font-size:0.72rem; opacity:0.75; margin-top:2px; }
-  .voice-unavail { font-size:0.8rem; color:var(--ink-light); font-style:italic; }
+.instr-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #e8dff5;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #5b3a8c;
+  font-weight: bold;
+}
+.instr-box .ic { font-size: 20px; flex-shrink: 0; }
 
-  /* ── BUTTONS ── */
-  .btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1rem; }
-  .btn {
-    border:none; border-radius:10px; padding:0.7rem 1.3rem;
-    font-family:'Nunito',sans-serif; font-size:0.95rem; font-weight:700;
-    cursor:pointer; transition:transform 0.1s,box-shadow 0.1s;
-    display:flex; align-items:center; gap:7px;
-  }
-  .btn:active { transform:scale(0.97); }
-  .btn-primary { background:var(--purple); color:#fff; box-shadow:0 2px 8px rgba(91,58,140,0.25); }
-  .btn-primary:hover { background:#4a2e78; }
-  .btn-gold { background:var(--gold); color:#fff; box-shadow:0 2px 8px rgba(200,146,42,0.25); }
-  .btn-gold:hover { background:#b07d20; }
-  .btn-ghost { background:var(--parchment-dark); color:var(--ink-light); }
-  .btn-ghost:hover { background:#e0cfa0; }
-  .btn:disabled { opacity:0.45; cursor:not-allowed; transform:none; }
+.rec-indicator {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: #fff0f0;
+  border: 2px solid #f5b8b8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #9b1c2e;
+  font-weight: bold;
+}
+.rec-indicator.on { display: flex; }
+.pulse {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #9b1c2e; flex-shrink: 0;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
 
-  /* ── DONE ── */
-  #state-done { text-align:center; padding:1rem 0; }
-  #state-done .trophy { font-size:4rem; margin-bottom:0.75rem; }
-  #state-done h2 { font-family:'Lora',serif; font-size:1.5rem; color:var(--ink); margin-bottom:0.5rem; }
-  #state-done p { color:var(--ink-light); margin-bottom:1.25rem; }
-  .stars { font-size:1.8rem; margin-bottom:0.75rem; letter-spacing:4px; }
+.play-bar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: #e8dff5;
+  border: 2px solid #c3aee8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #5b3a8c;
+  font-weight: bold;
+}
+.play-bar.on { display: flex; }
+
+/* BUTTONS */
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-gold   { background: #c8922a; color: white; }
+.btn-purple { background: #5b3a8c; color: white; }
+.btn-red    { background: #c0392b; color: white; }
+.btn-green  { background: #27ae60; color: white; }
+.btn-ghost  { background: #f0e6c8; color: #6b4f2e; }
+
+/* DONE */
+.done-wrap { text-align: center; padding: 16px 0; }
+.trophy { font-size: 56px; margin-bottom: 10px; }
+.stars { font-size: 28px; letter-spacing: 4px; margin-bottom: 10px; }
+.done-text { color: #6b4f2e; margin-bottom: 20px; }
 </style>
 </head>
 <body>
 <div class="book">
-
   <div class="book-header">
-    <div class="book-title">Har·ry Pot·ter und der Zau·ber·er·stein</div>
-    <div class="chapter-title" id="headerChapter">Kapitelauswahl</div>
+    <div class="book-title">Har&middot;ry Pot&middot;ter und der Zau&middot;ber&middot;er&middot;stein</div>
+    <div class="chapter-title" id="headerChapter">Willkommen</div>
   </div>
 
-  <div class="progress-bar-wrap" id="progressWrap" style="display:none">
+  <div class="progress-wrap" id="progressWrap" style="display:none">
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0 / 30</div>
   </div>
 
-  <div class="main-area">
+  <div class="main">
 
-    <!-- INTRO / SETTINGS -->
-    <div id="state-intro">
-      <div class="big-icon">📖</div>
-      <h2>Bereit zum Lesen?</h2>
-      <p>Der Computer liest jeden Satz vor.<br>Höre zu und lies den Satz mit.<br>Die Wörter werden beim Vorlesen hervorgehoben!</p>
-      <div class="settings-panel">
+    <!-- INTRO -->
+    <div class="state active" id="state-intro">
+      <div class="big-icon">&#128218;</div>
+      <div class="center">
+        <h2>Bereit zum Lesen?</h2>
+        <p class="subtitle">Lies jeden Satz laut vor und nimm dich auf.<br>Dann h&ouml;rst du deine Aufnahme.<br>Danach liest die App den Satz vor!</p>
+      </div>
+      <div class="settings-box">
         <div class="settings-row">
-          <label>👩 Stimme:</label>
+          <label>&#128105; Stimme:</label>
           <div class="voice-row" id="voiceButtons">
-            <span class="voice-unavail">Stimmen werden geladen...</span>
+            <span class="voice-note">Stimmen werden geladen...</span>
           </div>
         </div>
         <div class="settings-row">
-          <label>🐢 Tempo:</label>
+          <label>&#128034; Tempo:</label>
           <input type="range" id="speedSlider" min="0.2" max="1.0" step="0.05" value="0.45" oninput="syncSpeed(this)">
           <span class="speed-val" id="speedVal">0.45</span>
         </div>
       </div>
       <div class="btn-row" style="justify-content:center">
-        <button class="btn btn-primary" onclick="showChapters()">📚 Kapitel wählen</button>
+        <button class="btn btn-purple" onclick="showChapters()">&#128218; Kapitel w&auml;hlen</button>
       </div>
     </div>
 
-    <!-- CHAPTER LIST -->
-    <div id="state-chapters" style="display:none">
+    <!-- CHAPTERS -->
+    <div class="state" id="state-chapters">
       <div class="chapter-list" id="chapterList"></div>
       <div class="btn-row">
-        <button class="btn btn-ghost" onclick="showIntro()">⚙️ Einstellungen</button>
+        <button class="btn btn-ghost" onclick="showIntro()">&#9881; Einstellungen</button>
       </div>
     </div>
 
     <!-- READING -->
-    <div id="state-reading" style="display:none">
+    <div class="state" id="state-reading">
       <div class="sentence-num" id="sentenceNum">Satz 1 von 30</div>
+      <div class="step-row">
+        <div class="step" id="step1"></div>
+        <div class="step" id="step2"></div>
+        <div class="step" id="step3"></div>
+        <div class="step" id="step4"></div>
+      </div>
       <div class="sentence-box" id="sentenceBox"></div>
-      <div class="instruction" id="instruction-listen">
-        <span class="icon">🔊</span><span>Höre zu — der Satz wird vorgelesen!</span>
-      </div>
-      <div class="instruction" id="instruction-done" style="display:none">
-        <span class="icon">✅</span><span>Gut gehört! Klicke auf Weiter.</span>
-      </div>
-      <div class="settings-panel">
+      <div class="instr-box" id="instr-read"><span class="ic">&#128214;</span><span>Lies den Satz laut vor &mdash; dann Aufnehmen dr&uuml;cken!</span></div>
+      <div class="instr-box" id="instr-record" style="display:none"><span class="ic">&#127908;</span><span>Sprich den Satz laut nach!</span></div>
+      <div class="instr-box" id="instr-playback" style="display:none"><span class="ic">&#9654;</span><span>Deine Aufnahme wird abgespielt...</span></div>
+      <div class="instr-box" id="instr-appread" style="display:none"><span class="ic">&#128266;</span><span>Die App liest den Satz vor &mdash; folge den W&ouml;rtern!</span></div>
+      <div class="instr-box" id="instr-done" style="display:none"><span class="ic">&#9989;</span><span>Gut gemacht! Weiter zum n&auml;chsten Satz.</span></div>
+      <div class="rec-indicator" id="recIndicator"><div class="pulse"></div><span>Aufnahme l&auml;uft... sprich jetzt!</span></div>
+      <div class="play-bar" id="playBar"><span>&#9654;</span><span>Deine Stimme...</span></div>
+      <div class="settings-box">
         <div class="settings-row">
-          <label>🐢 Tempo:</label>
+          <label>&#128034; Tempo:</label>
           <input type="range" id="speedSliderR" min="0.2" max="1.0" step="0.05" value="0.45" oninput="syncSpeedR(this)">
           <span class="speed-val" id="speedValR">0.45</span>
         </div>
       </div>
       <div class="btn-row">
-        <button class="btn btn-gold" id="btnListen" onclick="listenSentence()">🔊 Vorlesen</button>
-        <button class="btn btn-primary" id="btnNext" onclick="nextSentence()" style="display:none">Weiter</button>
-        <button class="btn btn-ghost" id="btnSkip" onclick="nextSentence()">Überspringen</button>
-        <button class="btn btn-ghost" id="btnHome" onclick="goHome()" style="margin-left:auto">🏠 Start</button>
+        <button class="btn btn-red"    id="btnRecord"   onclick="startRecording()">&#127908; Aufnehmen</button>
+        <button class="btn btn-green"  id="btnPlayback" onclick="playbackRecording()" style="display:none">&#9654; Abspielen</button>
+        <button class="btn btn-gold"   id="btnListen"   onclick="listenSentence()" style="display:none">&#128266; App liest vor</button>
+        <button class="btn btn-purple" id="btnNext"     onclick="nextSentence()" style="display:none">Weiter</button>
+        <button class="btn btn-ghost"  id="btnSkip"     onclick="skipSentence()">&#220;berspringen</button>
+        <button class="btn btn-ghost"  id="btnHome"     onclick="goHome()" style="margin-left:auto">&#127968; Start</button>
       </div>
     </div>
 
     <!-- DONE -->
-    <div id="state-done" style="display:none">
-      <div class="trophy">🏆</div>
-      <div class="stars" id="finalStars"></div>
-      <h2>Super gemacht!</h2>
-      <p id="finalText"></p>
-      <div class="btn-row" style="justify-content:center; flex-wrap:wrap;">
-        <button class="btn btn-primary" onclick="restartChapter()">🔄 Nochmal</button>
-        <button class="btn btn-ghost" onclick="goHome()">📚 Andere Kapitel</button>
+    <div class="state" id="state-done">
+      <div class="done-wrap">
+        <div class="trophy">&#127942;</div>
+        <div class="stars" id="finalStars">&#11088;&#11088;&#11088;</div>
+        <h2>Super gemacht!</h2>
+        <p class="done-text" id="finalText">Kapitel fertig!</p>
+        <div class="btn-row" style="justify-content:center; flex-wrap:wrap;">
+          <button class="btn btn-purple" onclick="restartChapter()">&#128260; Nochmal</button>
+          <button class="btn btn-ghost"  onclick="goHome()">&#128218; Andere Kapitel</button>
+        </div>
       </div>
     </div>
 
   </div>
 </div>
-
 <script>
-// ── Kapitel-Daten ─────────────────────────────────────────────────────────────
 const CHAPTERS = [
   {
     num: 1,
@@ -613,7 +729,6 @@ const CHAPTERS = [
   }
 ];
 
-// ── Silben-Map ────────────────────────────────────────────────────────────────
 const SYLLABLE_MAP = {
   // Namen
   "Familie":"Fa·mi·lie","Dursley":"Durs·ley","Dursleys":"Durs·leys",
@@ -678,362 +793,477 @@ const SYLLABLE_MAP = {
   "hinten":"hin·ten","vorne":"vor·ne","davor":"da·vor","danach":"da·nach"
 };
 
-// ── App-Status ────────────────────────────────────────────────────────────────
-let currentChapterIdx = 0;
-let currentSentences = [];
-let currentIdx = 0;
-let synth = window.speechSynthesis;
-let selectedVoice = null;
-let selectedEnglishVoice = null;
-let availableEnglishVoices = [];
-let speechRate = 0.45;
+// ── State ──────────────────────────────────────────────────────────────────
+var currentChapterIdx = 0;
+var currentSentences = [];
+var currentIdx = 0;
+var synth = window.speechSynthesis;
+var selectedVoice = null;
+var selectedEnglishVoice = null;
+var speechRate = 0.45;
+var mediaRecorder = null;
+var recordedChunks = [];
+var recordedBlob = null;
+var recordedAudio = null;
+var highlightTimers = [];
 
-// ── Silben ────────────────────────────────────────────────────────────────────
-function applySyllables(text) {
-  let result = text;
-  const keys = Object.keys(SYLLABLE_MAP).sort((a,b) => b.length - a.length);
-  keys.forEach(w => {
-    const re = new RegExp('(?<![·\\wÄäÖöÜüß])' + w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '(?![·\\wÄäÖöÜüß])','g');
-    result = result.replace(re, SYLLABLE_MAP[w]);
-  });
-  return result;
-}
-
-function renderSentenceHTML(sentence) {
-  const tokens = sentence.split(/(\s+)/);
-  const syllabled = applySyllables(sentence);
-  const sylTokens = syllabled.split(/(\s+)/);
-  let wordIdx = 0, html = '';
-  for (let i = 0; i < tokens.length; i++) {
-    const tok = tokens[i];
-    if (/^\s+$/.test(tok)) { html += ' '; continue; }
-    const sylTok = sylTokens[i] || tok;
-    const rendered = sylTok.replace(/·/g, '<span class="syl-dot">·</span>');
-    html += `<span class="word" id="word-${wordIdx}" data-idx="${wordIdx}">${rendered}</span>`;
-    wordIdx++;
-  }
-  return html;
-}
-
-function getSentenceWords(sentence) { return sentence.match(/\S+/g) || []; }
-
-// ── Stimmen ───────────────────────────────────────────────────────────────────
-const EDGE_VOICE_PRESETS = [
-  { name:'Microsoft Hedda', desc:'Ruhig & klar',     matches:['hedda'],       lang:'de-DE' },
-  { name:'Microsoft Katja', desc:'Warm & natürlich', matches:['katja'],       lang:'de-DE' }
-];
-const EDGE_EN_MATCHES = ['libby','sonia','hazel','susan','amy','mia','clara','aria','jenny','michelle'];
-
-function findVoice(matches, lang) {
-  const all = window.speechSynthesis.getVoices();
-  for (const m of matches) {
-    const found = all.find(v => v.name.toLowerCase().includes(m) && v.lang.startsWith(lang.substring(0,2)));
-    if (found) return found;
-  }
-  return all.find(v => v.lang.startsWith(lang.substring(0,2))) || null;
-}
-
-function loadVoices() {
-  const all = window.speechSynthesis.getVoices();
-  if (all.length === 0) return;
-  selectedVoice = findVoice(['katja','hedda'], 'de') || all.find(v => v.lang.startsWith('de')) || null;
-  let engVoice = null;
-  for (const m of EDGE_EN_MATCHES) {
-    engVoice = all.find(v => v.name.toLowerCase().includes(m) && v.lang.startsWith('en'));
-    if (engVoice) break;
-  }
-  if (!engVoice) engVoice = all.find(v => v.lang.startsWith('en-GB') || v.lang.startsWith('en-AU'));
-  if (!engVoice) engVoice = all.find(v => v.lang.startsWith('en'));
-  selectedEnglishVoice = engVoice;
-  buildVoiceButtons();
-}
-
-function buildVoiceButtons() {
-  const container = document.getElementById('voiceButtons');
-  if (!container) return;
-  container.innerHTML = '';
-  let anyFound = false;
-  EDGE_VOICE_PRESETS.forEach(preset => {
-    const voice = findVoice(preset.matches, preset.lang);
-    const btn = document.createElement('button');
-    btn.className = 'voice-btn' + (voice && selectedVoice && voice.name === selectedVoice.name ? ' active' : '');
-    btn.innerHTML = `<span class="voice-name">${preset.name}</span><span class="voice-desc">${preset.desc}</span>`;
-    if (voice) {
-      anyFound = true;
-      btn.addEventListener('click', () => {
-        selectedVoice = voice;
-        container.querySelectorAll('.voice-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        synth.cancel();
-        const prev = new SpeechSynthesisUtterance('Hallo!');
-        prev.voice = voice; prev.lang = voice.lang; prev.rate = speechRate;
-        synth.speak(prev);
-      });
-    } else {
-      btn.disabled = true; btn.style.opacity = '0.4';
-      btn.title = 'Nicht verfügbar — Edge empfohlen';
-    }
-    container.appendChild(btn);
-  });
-  if (!anyFound) {
-    container.innerHTML = '<span class="voice-unavail">⚠️ Edge-Stimmen nicht gefunden. Bitte Microsoft Edge nutzen.</span>';
+// ── Show/hide states ───────────────────────────────────────────────────────
+function showState(id) {
+  var states = ['state-intro','state-chapters','state-reading','state-done'];
+  for (var i = 0; i < states.length; i++) {
+    document.getElementById(states[i]).className = 'state' + (states[i] === id ? ' active' : '');
   }
 }
 
-function syncSpeed(slider) {
-  speechRate = parseFloat(slider.value);
-  document.getElementById('speedVal').textContent = speechRate.toFixed(2);
-  const sr = document.getElementById('speedSliderR');
-  const sv = document.getElementById('speedValR');
-  if (sr) sr.value = speechRate;
-  if (sv) sv.textContent = speechRate.toFixed(2);
-}
-
-function syncSpeedR(slider) {
-  speechRate = parseFloat(slider.value);
-  document.getElementById('speedValR').textContent = speechRate.toFixed(2);
-  const si = document.getElementById('speedSlider');
-  const svi = document.getElementById('speedVal');
-  if (si) si.value = speechRate;
-  if (svi) svi.textContent = speechRate.toFixed(2);
-}
-
-window.speechSynthesis.onvoiceschanged = loadVoices;
-loadVoices();
-setTimeout(loadVoices, 800);
-
-// ── Englische Wörter ──────────────────────────────────────────────────────────
-const ENGLISH_WORDS = new Set([
-  'dursley','dursleys','privet','drive','harry','potter','dudley','vernon','petunia',
-  'piers','hagrid','hogwarts','gringotts','ollivander','weasley','ron','james','lily',
-  'muggel','muggle','diagon','rubeus'
-]);
-
-function segmentSentence(sentence) {
-  const tokens = sentence.split(/(\s+)/);
-  const segments = [];
-  let current = { text:'', lang:'de' };
-  tokens.forEach(tok => {
-    if (/^\s+$/.test(tok)) { current.text += tok; return; }
-    const clean = tok.replace(/[.,!?;:—–\-„"»«""'']/g,'').toLowerCase();
-    const isEng = ENGLISH_WORDS.has(clean);
-    const lang = isEng ? 'en' : 'de';
-    if (lang !== current.lang && current.text.trim()) {
-      segments.push({ text:current.text.trim(), lang:current.lang });
-      current = { text:tok, lang };
-    } else {
-      current.lang = lang;
-      current.text += (current.text ? ' ' : '') + tok;
-    }
-  });
-  if (current.text.trim()) segments.push({ text:current.text.trim(), lang:current.lang });
-  return segments;
-}
-
-// ── TTS ───────────────────────────────────────────────────────────────────────
-let highlightTimers = [];
-function clearHighlightTimers() { highlightTimers.forEach(t => clearTimeout(t)); highlightTimers = []; }
-
-function charWeights(words) { return words.map(w => Math.max(2, w.replace(/[.,!?;:—–]/g,'').length)); }
-
-function scheduleProportional(words, startGlobalIdx, startDelayMs, totalMs) {
-  clearHighlightTimers();
-  const weights = charWeights(words);
-  const totalWeight = weights.reduce((a,b) => a+b, 0);
-  let elapsed = startDelayMs;
-  words.forEach((w,i) => {
-    const share = (weights[i]/totalWeight)*totalMs;
-    const idx = startGlobalIdx + i;
-    const t = setTimeout(() => {
-      document.querySelectorAll('.word.speaking').forEach(el => el.classList.remove('speaking'));
-      const el = document.getElementById('word-'+idx);
-      if (el) el.classList.add('speaking');
-    }, elapsed);
-    highlightTimers.push(t);
-    elapsed += share;
-  });
-}
-
-const durationSamples = {};
-function recordDuration(charCount, ms) {
-  if (!durationSamples[charCount]) durationSamples[charCount] = [];
-  durationSamples[charCount].push(ms);
-  if (durationSamples[charCount].length > 5) durationSamples[charCount].shift();
-}
-function estimateDuration(text, rate) {
-  const chars = text.replace(/\s+/g,'').length;
-  const nearby = Object.keys(durationSamples).map(Number).filter(k => Math.abs(k-chars) <= 3);
-  if (nearby.length > 0) {
-    const samples = nearby.flatMap(k => durationSamples[k]);
-    const avg = samples.reduce((a,b) => a+b, 0) / samples.length;
-    return avg * (chars / nearby[0]);
-  }
-  return (chars / (13 * rate)) * 1000;
-}
-
-function listenSentence() {
-  synth.cancel(); clearHighlightTimers();
-  const sentence = currentSentences[currentIdx];
-  document.getElementById('sentenceBox').innerHTML = renderSentenceHTML(sentence);
-  document.getElementById('btnListen').disabled = true;
-  document.getElementById('instruction-listen').style.display = 'flex';
-  document.getElementById('btnNext').style.display = 'none';
-
-  const segments = segmentSentence(sentence);
-  let globalWordIdx = 0;
-
-  function onAllDone() {
-    clearHighlightTimers();
-    document.querySelectorAll('.word.speaking').forEach(el => el.classList.remove('speaking'));
-    document.getElementById('btnListen').disabled = false;
-    document.getElementById('btnNext').style.display = 'inline-flex';
-    document.getElementById('instruction-listen').style.display = 'none';
-    document.getElementById('instruction-done').style.display = 'flex';
-  }
-
-  function speakSegment(i) {
-    if (i >= segments.length) { onAllDone(); return; }
-    const seg = segments[i];
-    const utter = new SpeechSynthesisUtterance(seg.text);
-    utter.rate = speechRate; utter.pitch = 1.05;
-    if (seg.lang === 'en') {
-      if (selectedEnglishVoice) { utter.voice = selectedEnglishVoice; utter.lang = selectedEnglishVoice.lang; }
-      else { utter.lang = 'en-GB'; }
-    } else {
-      if (selectedVoice) { utter.voice = selectedVoice; utter.lang = selectedVoice.lang; }
-      else { utter.lang = 'de-DE'; }
-    }
-    const segWords = getSentenceWords(seg.text);
-    const segStartIdx = globalWordIdx;
-    let segWordCount = 0, startTime = null, usedBoundary = false;
-    utter.addEventListener('boundary', (e) => {
-      if (e.name === 'word') {
-        if (!usedBoundary) { clearHighlightTimers(); usedBoundary = true; }
-        document.querySelectorAll('.word.speaking').forEach(el => el.classList.remove('speaking'));
-        const el = document.getElementById('word-'+(segStartIdx+segWordCount));
-        if (el) el.classList.add('speaking');
-        segWordCount++;
-      }
-    });
-    utter.onstart = () => {
-      startTime = Date.now();
-      const estMs = estimateDuration(seg.text, speechRate);
-      scheduleProportional(segWords, segStartIdx, 80, estMs * 0.92);
-    };
-    utter.onend = () => {
-      const actualMs = startTime ? Date.now() - startTime : 0;
-      if (actualMs > 100) recordDuration(seg.text.replace(/\s+/g,'').length, actualMs);
-      if (!usedBoundary && actualMs > 0) scheduleProportional(segWords, segStartIdx, 0, actualMs);
-      globalWordIdx += segWords.length;
-      speakSegment(i+1);
-    };
-    utter.onerror = () => { globalWordIdx += segWords.length; speakSegment(i+1); };
-    synth.speak(utter);
-  }
-  speakSegment(0);
-}
-
-// ── Navigation ────────────────────────────────────────────────────────────────
-function updateProgress() {
-  const pct = (currentIdx / currentSentences.length) * 100;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = `${currentIdx} / ${currentSentences.length}`;
-}
-
-function loadSentence() {
-  document.getElementById('sentenceNum').textContent = `Satz ${currentIdx+1} von ${currentSentences.length}`;
-  document.getElementById('sentenceBox').innerHTML = renderSentenceHTML(currentSentences[currentIdx]);
-  document.getElementById('btnNext').style.display = 'none';
-  document.getElementById('btnListen').disabled = false;
-  document.getElementById('instruction-listen').style.display = 'flex';
-  document.getElementById('instruction-done').style.display = 'none';
-  updateProgress();
-}
-
-function nextSentence() {
-  synth.cancel();
-  currentIdx++;
-  if (currentIdx >= currentSentences.length) showDone();
-  else loadSentence();
-}
-
-function showDone() {
-  synth.cancel(); clearHighlightTimers();
-  document.getElementById('state-reading').style.display = 'none';
-  document.getElementById('state-done').style.display = 'block';
-  document.getElementById('progressFill').style.width = '100%';
-  document.getElementById('progressLabel').textContent = `${currentSentences.length} / ${currentSentences.length}`;
-  document.getElementById('finalStars').textContent = '⭐⭐⭐';
-  const ch = CHAPTERS[currentChapterIdx];
-  document.getElementById('finalText').textContent = `Kapitel ${ch.num} fertig! Toll gemacht!`;
-}
-
-// ── Zustandswechsel ───────────────────────────────────────────────────────────
 function showIntro() {
-  synth.cancel(); clearHighlightTimers();
-  document.getElementById('state-chapters').style.display = 'none';
-  document.getElementById('state-reading').style.display = 'none';
-  document.getElementById('state-done').style.display = 'none';
-  document.getElementById('state-intro').style.display = 'block';
+  synth.cancel(); clearTimers();
   document.getElementById('progressWrap').style.display = 'none';
   document.getElementById('headerChapter').textContent = 'Einstellungen';
+  showState('state-intro');
   loadVoices();
 }
 
 function showChapters() {
-  document.getElementById('state-intro').style.display = 'none';
-  document.getElementById('state-reading').style.display = 'none';
-  document.getElementById('state-done').style.display = 'none';
-  document.getElementById('state-chapters').style.display = 'block';
+  synth.cancel(); clearTimers();
   document.getElementById('progressWrap').style.display = 'none';
-  document.getElementById('headerChapter').textContent = 'Kapitel wählen';
+  document.getElementById('headerChapter').textContent = 'Kapitel w\u00e4hlen';
+  showState('state-chapters');
   buildChapterList();
 }
 
+function showDone() {
+  synth.cancel(); clearTimers();
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressLabel').textContent = currentSentences.length + ' / ' + currentSentences.length;
+  document.getElementById('finalText').textContent = 'Kapitel ' + CHAPTERS[currentChapterIdx].num + ' fertig! Toll gemacht!';
+  showState('state-done');
+}
+
+function goHome() { showChapters(); }
+
+// ── Chapter list ───────────────────────────────────────────────────────────
 function buildChapterList() {
-  const list = document.getElementById('chapterList');
+  var list = document.getElementById('chapterList');
   list.innerHTML = '';
-  CHAPTERS.forEach((ch, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'chapter-item';
-    btn.innerHTML = `
-      <div class="chapter-num">${ch.num}</div>
-      <div class="chapter-info">
-        <div class="chapter-name">${ch.title}</div>
-        <div class="chapter-sub">${ch.sentences.length} Sätze</div>
-      </div>
-      <div class="chapter-arrow">›</div>`;
-    btn.addEventListener('click', () => startChapter(i));
-    list.appendChild(btn);
-  });
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    (function(idx) {
+      var ch = CHAPTERS[idx];
+      var btn = document.createElement('button');
+      btn.className = 'chapter-btn';
+
+      var numEl = document.createElement('div');
+      numEl.className = 'ch-num';
+      numEl.textContent = ch.num;
+
+      var infoEl = document.createElement('div');
+      infoEl.className = 'ch-info';
+
+      var nameEl = document.createElement('div');
+      nameEl.className = 'ch-name';
+      nameEl.textContent = ch.title;
+
+      var subEl = document.createElement('div');
+      subEl.className = 'ch-sub';
+      subEl.textContent = ch.sentences.length + ' S\u00e4tze';
+
+      var arrEl = document.createElement('div');
+      arrEl.className = 'ch-arrow';
+      arrEl.textContent = '\u203a';
+
+      infoEl.appendChild(nameEl);
+      infoEl.appendChild(subEl);
+      btn.appendChild(numEl);
+      btn.appendChild(infoEl);
+      btn.appendChild(arrEl);
+      btn.onclick = function() { startChapter(idx); };
+      list.appendChild(btn);
+    })(i);
+  }
 }
 
 function startChapter(idx) {
   currentChapterIdx = idx;
   currentSentences = CHAPTERS[idx].sentences;
   currentIdx = 0;
-  const ch = CHAPTERS[idx];
-  document.getElementById('headerChapter').textContent = `Kapitel ${ch.num} — ${ch.title}`;
-  document.getElementById('state-chapters').style.display = 'none';
-  document.getElementById('state-done').style.display = 'none';
-  document.getElementById('state-reading').style.display = 'block';
+  document.getElementById('headerChapter').textContent = 'Kapitel ' + CHAPTERS[idx].num + ' \u2014 ' + CHAPTERS[idx].title;
   document.getElementById('progressWrap').style.display = 'flex';
+  showState('state-reading');
   loadSentence();
 }
 
 function restartChapter() {
   currentIdx = 0;
-  document.getElementById('state-done').style.display = 'none';
-  document.getElementById('state-reading').style.display = 'block';
+  showState('state-reading');
   loadSentence();
 }
 
-function goHome() {
-  synth.cancel(); clearHighlightTimers();
-  showChapters();
+// ── Voices ─────────────────────────────────────────────────────────────────
+var VOICE_PRESETS = [
+  { name:'Microsoft Hedda', desc:'Ruhig & klar',     match:'hedda' },
+  { name:'Microsoft Katja', desc:'Warm & nat\u00fcrlich', match:'katja' }
+];
+
+function findVoice(match, lang) {
+  var all = synth.getVoices();
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].name.toLowerCase().indexOf(match) >= 0) return all[i];
+  }
+  for (var j = 0; j < all.length; j++) {
+    if (all[j].lang.indexOf(lang) === 0) return all[j];
+  }
+  return null;
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+function loadVoices() {
+  var all = synth.getVoices();
+  if (all.length === 0) return;
+  selectedVoice = findVoice('katja','de') || findVoice('hedda','de') || findVoice('','de');
+  var enMatches = ['libby','sonia','hazel','amy','aria','jenny'];
+  selectedEnglishVoice = null;
+  for (var i = 0; i < enMatches.length; i++) {
+    var v = findVoice(enMatches[i], 'en');
+    if (v) { selectedEnglishVoice = v; break; }
+  }
+  if (!selectedEnglishVoice) selectedEnglishVoice = findVoice('','en-GB') || findVoice('','en');
+  buildVoiceButtons();
+}
+
+function buildVoiceButtons() {
+  var container = document.getElementById('voiceButtons');
+  container.innerHTML = '';
+  var anyFound = false;
+  for (var i = 0; i < VOICE_PRESETS.length; i++) {
+    var preset = VOICE_PRESETS[i];
+    var voice = findVoice(preset.match, 'de');
+    var btn = document.createElement('button');
+    btn.className = 'voice-btn' + (voice && selectedVoice && voice.name === selectedVoice.name ? ' active' : '');
+    var nm = document.createElement('span');
+    nm.textContent = preset.name;
+    var sm = document.createElement('small');
+    sm.textContent = preset.desc;
+    btn.appendChild(nm);
+    btn.appendChild(sm);
+    if (voice) {
+      anyFound = true;
+      (function(v, b) {
+        b.onclick = function() {
+          selectedVoice = v;
+          var btns = container.querySelectorAll('.voice-btn');
+          for (var k = 0; k < btns.length; k++) btns[k].classList.remove('active');
+          b.classList.add('active');
+          synth.cancel();
+          var prev = new SpeechSynthesisUtterance('Hallo!');
+          prev.voice = v; prev.lang = v.lang; prev.rate = speechRate;
+          synth.speak(prev);
+        };
+      })(voice, btn);
+    } else {
+      btn.disabled = true;
+    }
+    container.appendChild(btn);
+  }
+  if (!anyFound) {
+    container.innerHTML = '<span class="voice-note">&#9888; Bitte Microsoft Edge nutzen f\u00fcr bessere Stimmen.</span>';
+  }
+}
+
+function syncSpeed(slider) {
+  speechRate = parseFloat(slider.value);
+  document.getElementById('speedVal').textContent = speechRate.toFixed(2);
+  document.getElementById('speedSliderR').value = speechRate;
+  document.getElementById('speedValR').textContent = speechRate.toFixed(2);
+}
+function syncSpeedR(slider) {
+  speechRate = parseFloat(slider.value);
+  document.getElementById('speedValR').textContent = speechRate.toFixed(2);
+  document.getElementById('speedSlider').value = speechRate;
+  document.getElementById('speedVal').textContent = speechRate.toFixed(2);
+}
+
+synth.onvoiceschanged = loadVoices;
+loadVoices();
+setTimeout(loadVoices, 800);
+
+// ── Syllables ──────────────────────────────────────────────────────────────
+function applySyllables(text) {
+  var result = text;
+  var keys = Object.keys(SYLLABLE_MAP).sort(function(a,b){return b.length-a.length;});
+  for (var i = 0; i < keys.length; i++) {
+    var w = keys[i];
+    var escaped = w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    var re = new RegExp('(?<![\u00b7\\wÄäÖöÜüß])' + escaped + '(?![\u00b7\\wÄäÖöÜüß])','g');
+    result = result.replace(re, SYLLABLE_MAP[w]);
+  }
+  return result;
+}
+
+function renderHTML(sentence) {
+  var tokens = sentence.split(/(\s+)/);
+  var syllabled = applySyllables(sentence);
+  var sylTokens = syllabled.split(/(\s+)/);
+  var wordIdx = 0;
+  var html = '';
+  for (var i = 0; i < tokens.length; i++) {
+    var tok = tokens[i];
+    if (/^\s+$/.test(tok)) { html += ' '; continue; }
+    var sylTok = sylTokens[i] || tok;
+    var rendered = sylTok.replace(/\u00b7/g, '<span class="syl-dot">\u00b7</span>');
+    // replace actual middle dot character too
+    rendered = rendered.replace(/·/g, '<span class="syl-dot">·</span>');
+    html += '<span class="word" id="word-' + wordIdx + '">' + rendered + '</span>';
+    wordIdx++;
+  }
+  return html;
+}
+
+function getWords(sentence) { return sentence.match(/\S+/g) || []; }
+
+// ── English word segments ──────────────────────────────────────────────────
+var EN_WORDS = {'dursley':1,'dursleys':1,'privet':1,'drive':1,'harry':1,'potter':1,
+  'dudley':1,'vernon':1,'petunia':1,'piers':1,'hagrid':1,'hogwarts':1,
+  'gringotts':1,'ollivander':1,'weasley':1,'ron':1,'james':1,'lily':1,'diagon':1};
+
+function segmentSentence(sentence) {
+  var tokens = sentence.split(/(\s+)/);
+  var segments = [];
+  var cur = { text:'', lang:'de' };
+  for (var i = 0; i < tokens.length; i++) {
+    var tok = tokens[i];
+    if (/^\s+$/.test(tok)) { cur.text += tok; continue; }
+    var clean = tok.replace(/[.,!?;:—\-]/g,'').toLowerCase();
+    var lang = EN_WORDS[clean] ? 'en' : 'de';
+    if (lang !== cur.lang && cur.text.trim()) {
+      segments.push({ text:cur.text.trim(), lang:cur.lang });
+      cur = { text:tok, lang:lang };
+    } else {
+      cur.lang = lang;
+      cur.text += (cur.text ? ' ' : '') + tok;
+    }
+  }
+  if (cur.text.trim()) segments.push({ text:cur.text.trim(), lang:cur.lang });
+  return segments;
+}
+
+// ── TTS ────────────────────────────────────────────────────────────────────
+function clearTimers() {
+  for (var i = 0; i < highlightTimers.length; i++) clearTimeout(highlightTimers[i]);
+  highlightTimers = [];
+}
+
+function scheduleHighlights(words, startIdx, startMs, totalMs) {
+  clearTimers();
+  var weights = words.map(function(w){ return Math.max(2, w.replace(/[.,!?;:—]/g,'').length); });
+  var total = weights.reduce(function(a,b){return a+b;},0);
+  var elapsed = startMs;
+  for (var i = 0; i < words.length; i++) {
+    (function(idx, delay){
+      var t = setTimeout(function(){
+        var els = document.querySelectorAll('.word.speaking');
+        for (var k=0;k<els.length;k++) els[k].classList.remove('speaking');
+        var el = document.getElementById('word-'+idx);
+        if (el) el.classList.add('speaking');
+      }, delay);
+      highlightTimers.push(t);
+    })(startIdx+i, elapsed);
+    elapsed += (weights[i]/total)*totalMs;
+  }
+}
+
+var durSamples = {};
+function estDuration(text, rate) {
+  var chars = text.replace(/\s+/g,'').length;
+  return (chars / (13 * rate)) * 1000;
+}
+
+function listenSentence() {
+  synth.cancel(); clearTimers();
+  var sentence = currentSentences[currentIdx];
+  document.getElementById('sentenceBox').innerHTML = renderHTML(sentence);
+  document.getElementById('btnListen').disabled = true;
+  showInstr('instr-appread');
+
+  var segments = segmentSentence(sentence);
+  var globalIdx = 0;
+
+  function done() {
+    clearTimers();
+    var els = document.querySelectorAll('.word.speaking');
+    for (var k=0;k<els.length;k++) els[k].classList.remove('speaking');
+    document.getElementById('btnListen').disabled = false;
+    document.getElementById('btnNext').style.display = 'inline-flex';
+    showInstr('instr-done');
+  }
+
+  function speakSeg(i) {
+    if (i >= segments.length) { done(); return; }
+    var seg = segments[i];
+    var u = new SpeechSynthesisUtterance(seg.text);
+    u.rate = speechRate; u.pitch = 1.05;
+    if (seg.lang === 'en' && selectedEnglishVoice) { u.voice = selectedEnglishVoice; u.lang = selectedEnglishVoice.lang; }
+    else if (seg.lang === 'de' && selectedVoice) { u.voice = selectedVoice; u.lang = selectedVoice.lang; }
+    else { u.lang = seg.lang === 'en' ? 'en-GB' : 'de-DE'; }
+
+    var segWords = getWords(seg.text);
+    var segStart = globalIdx;
+    var segCount = 0;
+    var startTime = null;
+    var usedBoundary = false;
+
+    u.addEventListener('boundary', function(e) {
+      if (e.name === 'word') {
+        if (!usedBoundary) { clearTimers(); usedBoundary = true; }
+        var els = document.querySelectorAll('.word.speaking');
+        for (var k=0;k<els.length;k++) els[k].classList.remove('speaking');
+        var el = document.getElementById('word-'+(segStart+segCount));
+        if (el) el.classList.add('speaking');
+        segCount++;
+      }
+    });
+    u.onstart = function() {
+      startTime = Date.now();
+      scheduleHighlights(segWords, segStart, 80, estDuration(seg.text, speechRate)*0.92);
+    };
+    u.onend = function() {
+      var actual = startTime ? Date.now()-startTime : 0;
+      if (!usedBoundary && actual > 0) scheduleHighlights(segWords, segStart, 0, actual);
+      globalIdx += segWords.length;
+      speakSeg(i+1);
+    };
+    u.onerror = function() { globalIdx += segWords.length; speakSeg(i+1); };
+    synth.speak(u);
+  }
+  speakSeg(0);
+}
+
+// ── Step / Instruction helpers ─────────────────────────────────────────────
+function setStep(n) {
+  for (var i = 1; i <= 4; i++) {
+    var el = document.getElementById('step'+i);
+    el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
+  }
+}
+
+function showInstr(id) {
+  var ids = ['instr-read','instr-record','instr-playback','instr-appread','instr-done'];
+  for (var i = 0; i < ids.length; i++) {
+    document.getElementById(ids[i]).style.display = ids[i]===id ? 'flex' : 'none';
+  }
+}
+
+// ── Recording ──────────────────────────────────────────────────────────────
+function startRecording() {
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    recordedChunks = [];
+    recordedBlob = null;
+    recordedAudio = null;
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = function(e){ if(e.data.size>0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = function(){
+      stream.getTracks().forEach(function(t){t.stop();});
+      recordedBlob = new Blob(recordedChunks, {type:'audio/webm'});
+      recordedAudio = new Audio(URL.createObjectURL(recordedBlob));
+      recordedAudio.onended = onPlaybackEnded;
+      onRecordingDone();
+    };
+    mediaRecorder.start();
+    document.getElementById('recIndicator').classList.add('on');
+    document.getElementById('btnRecord').disabled = true;
+    document.getElementById('btnSkip').disabled = true;
+    showInstr('instr-record');
+    setStep(2);
+    setTimeout(function(){
+      var btn = document.getElementById('btnRecord');
+      btn.disabled = false;
+      btn.textContent = '⏹ Fertig';
+      btn.onclick = stopRecording;
+    }, 600);
+    setTimeout(function(){ if(mediaRecorder && mediaRecorder.state==='recording') stopRecording(); }, 15000);
+  }).catch(function(){
+    showInstr('instr-appread');
+    setStep(4);
+    document.getElementById('btnListen').style.display = 'inline-flex';
+    document.getElementById('btnRecord').style.display = 'none';
+  });
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop();
+  document.getElementById('recIndicator').classList.remove('on');
+  document.getElementById('btnSkip').disabled = false;
+  var btn = document.getElementById('btnRecord');
+  btn.textContent = '🎤 Aufnehmen';
+  btn.onclick = startRecording;
+  btn.disabled = true;
+}
+
+function onRecordingDone() {
+  setStep(3);
+  showInstr('instr-playback');
+  document.getElementById('btnPlayback').style.display = 'inline-flex';
+  document.getElementById('btnRecord').style.display = 'none';
+  playbackRecording();
+}
+
+function playbackRecording() {
+  if (!recordedAudio) return;
+  document.getElementById('playBar').classList.add('on');
+  document.getElementById('btnPlayback').disabled = true;
+  recordedAudio.currentTime = 0;
+  recordedAudio.play();
+}
+
+function onPlaybackEnded() {
+  document.getElementById('playBar').classList.remove('on');
+  document.getElementById('btnPlayback').disabled = false;
+  setStep(4);
+  showInstr('instr-appread');
+  document.getElementById('btnListen').style.display = 'inline-flex';
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function updateProgress() {
+  var pct = (currentIdx / currentSentences.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = currentIdx + ' / ' + currentSentences.length;
+}
+
+function loadSentence() {
+  synth.cancel(); clearTimers();
+  recordedBlob = null; recordedAudio = null; recordedChunks = [];
+  if (mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop();
+
+  document.getElementById('sentenceNum').textContent = 'Satz ' + (currentIdx+1) + ' von ' + currentSentences.length;
+  document.getElementById('sentenceBox').innerHTML = renderHTML(currentSentences[currentIdx]);
+
+  document.getElementById('btnRecord').style.display = 'inline-flex';
+  document.getElementById('btnRecord').disabled = false;
+  document.getElementById('btnRecord').textContent = '🎤 Aufnehmen';
+  document.getElementById('btnRecord').onclick = startRecording;
+  document.getElementById('btnPlayback').style.display = 'none';
+  document.getElementById('btnListen').style.display = 'none';
+  document.getElementById('btnNext').style.display = 'none';
+  document.getElementById('recIndicator').classList.remove('on');
+  document.getElementById('playBar').classList.remove('on');
+
+  setStep(1);
+  showInstr('instr-read');
+  updateProgress();
+}
+
+function nextSentence() {
+  synth.cancel(); clearTimers();
+  currentIdx++;
+  if (currentIdx >= currentSentences.length) showDone();
+  else loadSentence();
+}
+
+function skipSentence() {
+  if (mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop();
+  synth.cancel(); clearTimers();
+  currentIdx++;
+  if (currentIdx >= currentSentences.length) showDone();
+  else loadSentence();
+}
 </script>
 </body>
 </html>
